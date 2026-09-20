@@ -25,7 +25,7 @@ Dashboard prezentuje:
 - Sugerowaną zmianę procentową,
 - Wykres porównawczy cen rzeczywistych z prognozowanymi.
 
-*![alt text](image.png)*
+*![alt text](image-1.png)*
 
 ---
 
