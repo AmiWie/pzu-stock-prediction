@@ -8,13 +8,13 @@ from datetime import timedelta
 from model import StockPriceRNN
 
 def run_prediction():
-    # 1. Wczytanie modelu i skalera
+    # Wczytanie modelu i skalera
     scaler = joblib.load("models/scaler.pkl")
     model = StockPriceRNN()
     model.load_state_dict(torch.load("models/model.pth", weights_only=True))
     model.eval()
 
-    # 2. Pobranie ostatnich 60 dni roboczych, by mieć pewne 30 dni sesyjnych
+    # Pobranie ostatnich 60 dni roboczych, by mieć pewne 30 dni sesyjnych
     df = yf.download("PZU.WA", period="60d", interval="1d", progress=False)
     if isinstance(df.columns, pd.MultiIndex):
         open_series = df['Open']['PZU.WA'].dropna()
@@ -24,7 +24,7 @@ def run_prediction():
     last_30_days = open_series.values[-30:].reshape(-1, 1)
     last_date = open_series.index[-1]
 
-    # 3. Skalowanie i predykcja na kolejną sesję
+    # Skalowanie i predykcja na kolejną sesję
     scaled_input = scaler.transform(last_30_days)
     tensor_input = torch.tensor(scaled_input, dtype=torch.float32).unsqueeze(0)
 
@@ -42,7 +42,7 @@ def run_prediction():
     print(f"Ostatnia znana sesja: {last_date.strftime('%Y-%m-%d')}, Kurs Otwarcia: {last_30_days[-1][0]:.2f}")
     print(f"Prognoza na kolejną sesję ({next_date.strftime('%Y-%m-%d')}): {predicted_price:.2f} PLN")
 
-    # 4. Zapis / aktualizacja tabeli wyników
+    # Zapis/aktualizacja tabeli wyników
     os.makedirs("data", exist_ok=True)
     csv_file = "data/predictions.csv"
     

@@ -1,4 +1,3 @@
-# src/train.py
 import os
 import pandas as pd
 import numpy as np
@@ -9,8 +8,8 @@ import joblib
 import yfinance as yf
 from model import StockPriceRNN
 
-# 1. Pobranie danych z GPW (PZU.WA)
-print("Pobieranie danych PZU...")
+#  Pobranie danych z GPW 
+print("Pobieranie danych PZU")
 df = yf.download("PZU.WA", start="2018-01-01", progress=False)
 
 # Jeśli yfinance zwróci MultiIndex, wybieramy kolumnę Open
@@ -19,19 +18,19 @@ if isinstance(df.columns, pd.MultiIndex):
 else:
     prices = df['Open'].dropna().values.reshape(-1, 1)
 
-# 2. Podział chronologiczny (80% train, 20% test)
+# Podział danych (80% train, 20% test)
 train_size = int(len(prices) * 0.8)
 train_prices = prices[:train_size]
 test_prices = prices[train_size:]
 
-# 3. Skalowanie (fit TYLKO na zbiorze treningowym!)
+# Skalowanie (fit tylko na zbiorze treningowym!)
 scaler = MinMaxScaler(feature_range=(0, 1))
 train_scaled = scaler.fit_transform(train_prices)
 test_scaled = scaler.transform(test_prices)
 
 full_scaled = np.vstack([train_scaled, test_scaled])
 
-# 4. Tworzenie sekwencji 30-dniowych
+# Tworzenie sekwencji 30-dniowych
 n_past = 30
 X, y = [], []
 for i in range(n_past, len(full_scaled)):
@@ -44,13 +43,13 @@ split_idx = train_size - n_past
 X_train, y_train = torch.tensor(X[:split_idx], dtype=torch.float32), torch.tensor(y[:split_idx], dtype=torch.float32)
 X_test, y_test = torch.tensor(X[split_idx:], dtype=torch.float32), torch.tensor(y[split_idx:], dtype=torch.float32)
 
-# 5. Model i Trening
+# Model i Trening
 model = StockPriceRNN()
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.002)
 
-print("Rozpoczynanie treningu...")
-num_epochs = 300  # 300 epok wystarczy na początek
+print("Rozpoczynanie treningu")
+num_epochs = 300  
 for epoch in range(num_epochs):
     model.train()
     outputs = model(X_train)
@@ -62,7 +61,7 @@ for epoch in range(num_epochs):
     if (epoch + 1) % 50 == 0:
         print(f"Epoka {epoch + 1}/{num_epochs}, Loss: {loss.item():.5f}")
 
-# 6. Zapis modelu i skalera
+# Zapis modelu i skalera
 os.makedirs("models", exist_ok=True)
 torch.save(model.state_dict(), "models/model.pth")
 joblib.dump(scaler, "models/scaler.pkl")
