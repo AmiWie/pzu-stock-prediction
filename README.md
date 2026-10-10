@@ -13,7 +13,13 @@ Zautomatyzowany system predykcji kursu otwarcia akcji PZU S.A. na kolejną sesj�
    - Skrypt `src/predict.py` generuje prognozę na kolejny dzień sesyjny i aktualizuje plik `data/predictions.csv`.
 4. **Wizualizacja (Power BI):**
    - Dashboard połączony bezpośrednio z surowym plikiem na GitHubie.
-   - Zaplanowane automatyczne odświeżanie w chmurze Power BI Service każdego dnia roboczego.
+
+
+### Jak uruchomić i odświeżyć dashboard:
+1. Pobierz plik `powerbi/pzu_dashboard.pbix` z tego repozytorium.
+2. Otwórz go w programie **Power BI Desktop**.
+3. Na wstążce głównej kliknij przycisk **Odśwież** (*Refresh*) – program automatycznie zaciągnie najnowsze notowania i prognozy wygenerowane przez GitHub Actions.
+
 
 ---
 
