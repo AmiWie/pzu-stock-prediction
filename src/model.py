@@ -1,8 +1,7 @@
 import torch
 import torch.nn as nn
-
 class StockPriceRNN(nn.Module):
-    def __init__(self, input_size=1, hidden_size=50, num_layers=2, output_size=1):
+    def __init__(self, input_size=3, hidden_size=64, num_layers=2, output_size=1):
         super(StockPriceRNN, self).__init__()
         self.hidden_size = hidden_size
         self.num_layers = num_layers
